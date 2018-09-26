@@ -4,7 +4,7 @@
   "description": "The software to download, hold, and serve videos in the VlocChain Network",
   "main": "./lib/index.js",
   "scripts": {
-    "start": "node ./src/index.js",
+    "start": "./node_modules/.bin/babel-node ./src/index.js",
     "clean": "rimraf lib",
     "test": "npm run lint && npm run cover",
     "test:prod": "cross-env BABEL_ENV=production npm run test",

@@ -1,49 +1,39 @@
-"use strict";
+import onMessage from './handlers/onMessage';
 
 process.title = 'vlocc-holder-software';
 
 const webSocketsServerPort = 1337;
 
-const webSocketServer = require('websocket').server;
+const WebSocketServer = require('websocket').server;
 const http = require('http');
 
-const server = http.createServer(function(request, response) {
+const server = http.createServer((request, response) => {
   // Not important for us. We're writing WebSocket server,
   // not HTTP server
 });
 
-server.listen(webSocketsServerPort, function() {
-  console.log((new Date()) + " Server is listening on port "
-      + webSocketsServerPort);
+server.listen(webSocketsServerPort, () => {
+  console.log(`${new Date()} Server is listening on port ${webSocketsServerPort}`);
 });
 
 
-const wsServer = new webSocketServer({
+const wsServer = new WebSocketServer({
   httpServer: server
 });
 
 // The function passed is called on every connection
-wsServer.on('request', function(request) {
-  console.log((new Date()) + ' Connection from origin '
-      + request.origin + '.');
+wsServer.on('request', (request) => {
+  console.log(`${new Date()} Connection from origin ${request.origin}.`);
 
   // TODO : Check if they are coming from our website
-  let connection = request.accept(null, request.origin);
+  const connection = request.accept(null, request.origin);
 
-  console.log((new Date()) + ' Connection accepted.');
+  console.log(`${new Date()} Connection accepted.`);
 
-  // user is going to send the video file
-  connection.on('upload', function(message) {
-
-  });
-
-  // user is sending information about themself and video
-  connection.on('information', function(message) {
-
-  });
+  connection.on('message', onMessage);
 
   // user disconnected
-  connection.on('close', function(connection) {
-    console.warn("Someone Disconnected")
+  connection.on('close', (socket) => {
+    console.warn('Someone Disconnected', socket);
   });
 });
