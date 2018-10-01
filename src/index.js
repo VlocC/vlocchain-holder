@@ -28,11 +28,14 @@ wsServer.on('request', (request) => {
   console.log(request.requestedProtocols);
 
   let connection;
+  const uploadInformation = {};
 
   switch (request.requestedProtocols[0]) {
     case 'upload':
       connection = request.accept('upload', request.origin);
-      connection.on('message', upload);
+      connection.on('message', (req) => {
+        upload(req, uploadInformation);
+      });
       console.log(`${new Date()} upload Connection accepted.`);
       break;
 
