@@ -12,7 +12,7 @@ export default (data, uploadInformation) => {
           break;
 
         case 'END':
-          fs.writeFile('./test.jpg', uploadInformation.videoArr, (err) => {
+          fs.writeFile(`./${sentArr[1]}.${sentArr[2]}`, uploadInformation.videoArr, (err) => {
             if (err) {
               console.log(err);
             }
