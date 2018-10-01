@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 export default (data, uploadInformation) => {
   let sentArr;
   switch (data.type) {
@@ -5,12 +7,17 @@ export default (data, uploadInformation) => {
       sentArr = data.utf8Data.split(':');
       switch (sentArr[0]) {
         case 'START':
-          uploadInformation.videoArr = new Int16Array(parseInt(sentArr[1], 10));
+          uploadInformation.videoArr = new Uint8Array(parseInt(sentArr[1], 10));
           uploadInformation.index = 0;
           break;
 
         case 'END':
-          console.log('save file to system')
+          fs.writeFile('./test.jpg', uploadInformation.videoArr, (err) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log('The file was saved!');
+          });
           break;
 
         default:
