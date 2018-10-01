@@ -1,4 +1,5 @@
-import onMessage from './handlers/onMessage';
+import upload from './handlers/upload';
+import stream from './handlers/stream';
 
 process.title = 'vlocc-holder-software';
 
@@ -24,13 +25,30 @@ const wsServer = new WebSocketServer({
 // The function passed is called on every connection
 wsServer.on('request', (request) => {
   console.log(`${new Date()} Connection from origin ${request.origin}.`);
+  console.log(request.requestedProtocols);
 
-  // TODO : Check if they are coming from our website
-  const connection = request.accept(null, request.origin);
+  let connection;
 
-  console.log(`${new Date()} Connection accepted.`);
+  switch (request.requestedProtocols[0]) {
+    case 'upload':
+      connection = request.accept('upload', request.origin);
+      connection.on('message', upload);
+      console.log(`${new Date()} upload Connection accepted.`);
+      break;
 
-  connection.on('message', onMessage);
+    case 'stream':
+      connection = request.accept('stream', request.origin);
+      connection.on('message', stream);
+      console.log(`${new Date()} stream Connection accepted.`);
+      break;
+    default:
+      request.reject();
+      console.log(`${new Date()} Connection rejected, Incorrect protocol.`);
+  }
+
+  connection.on('error', (e) => {
+    console.log(e);
+  });
 
   // user disconnected
   connection.on('close', (socket) => {
