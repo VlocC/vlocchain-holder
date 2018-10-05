@@ -33,15 +33,17 @@ wsServer.on('request', (request) => {
   switch (request.requestedProtocols[0]) {
     case 'upload':
       connection = request.accept('upload', request.origin);
-      connection.on('message', (req) => {
-        upload(req, uploadInformation);
+      connection.on('message', (data) => {
+        upload(data, uploadInformation);
       });
       console.log(`${new Date()} upload Connection accepted.`);
       break;
 
     case 'stream':
       connection = request.accept('stream', request.origin);
-      connection.on('message', stream);
+      connection.on('message', (data) => {
+        stream(data, connection);
+      });
       console.log(`${new Date()} stream Connection accepted.`);
       break;
     default:
