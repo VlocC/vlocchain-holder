@@ -1,10 +1,12 @@
 import fs from 'fs';
 
 const sendVideoById = (id, connection) => {
-  fs.readFile(`./${id}.mp4`, (err, data) => {
-    if (err) throw err;
-    connection.sendBytes(data);
-  });
+  if (fs.existsSync(`./${id}.mp4`)) {
+    fs.readFile(`./${id}.mp4`, (err, data) => {
+      if (err) throw err;
+      connection.sendBytes(data);
+    });
+  }
 };
 
 export default (data, connection) => {
