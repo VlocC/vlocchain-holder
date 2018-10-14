@@ -16,12 +16,14 @@ const getVideoCodecs = (id) => {
 
   const output = execSync(`mp4info ${id}.mp4 | grep Codecs`).toString('utf8').trim();
   console.log(typeof output);
-  const codecsArr = output.split('Codecs String: ').reduce((acc, curr) => {
+  const codecs = output.split('Codecs String: ').reduce((acc, curr) => {
     if (curr !== '' && curr !== null) {
       return !acc ? curr : `${acc.trim()}, ${curr.trim()}`;
     }
+    return acc;
   });
-  console.log(codecsArr);
+
+  return `video/mp4; codecs="${codecs}"`;
 };
 
 export default (data, connection) => {
@@ -33,7 +35,7 @@ export default (data, connection) => {
 
       switch (sentArr[0]) {
         case 'START':
-          codec = getVideoCodecs(sentArr[1]);
+          connection.sendUTF(getVideoCodecs(sentArr[1]));
           sendVideoById(sentArr[1], codec, connection);
           break;
 
